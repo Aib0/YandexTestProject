@@ -10,7 +10,7 @@
     tools:context="com.example.anton.yandextestproject.MainActivity">
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/main_list_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

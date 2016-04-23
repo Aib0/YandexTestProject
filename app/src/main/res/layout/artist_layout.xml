@@ -11,21 +11,22 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/text1"
+            android:id="@+id/artist_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="This is Title"
+            android:text="@string/artist_title"
             android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/text2"
+            android:id="@+id/artist_short_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="This is Description" />
+            android:text="@string/artist_short_desc" />
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/img"
+        android:id="@+id/artist_small_img"
+        android:contentDescription="@string/artist_small_img"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

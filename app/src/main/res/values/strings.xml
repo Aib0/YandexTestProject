@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">YandexTestProject</string>
     <string name="small_artist_photo">Small artist photo</string>
+    <string name="artist_short_desc">This is Description</string>
+    <string name="artist_title">This is Title</string>
+    <string name="artist_small_img">Small artist photo</string>
 </resources>

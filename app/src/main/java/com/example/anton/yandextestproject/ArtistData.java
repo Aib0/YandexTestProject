@@ -36,5 +36,9 @@ public class ArtistData {
         public String small;
         public String big;
     }
+
+    public String getShortDesc() {
+        return this.description.substring(0,30);
+    }
 }
 
