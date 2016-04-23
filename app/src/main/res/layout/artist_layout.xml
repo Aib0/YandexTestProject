@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:id="@+id/artist_line"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/artist_small_img"
+        android:contentDescription="@string/artist_small_img"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:src="@drawable/no_image" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="5"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingLeft="10dp">
 
         <TextView
             android:id="@+id/artist_title"
@@ -18,18 +29,17 @@
             android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/artist_short_desc"
+            android:id="@+id/artist_tag_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/artist_short_desc" />
-    </LinearLayout>
+            android:text="@string/artist_tag_list" />
 
-    <ImageView
-        android:id="@+id/artist_small_img"
-        android:contentDescription="@string/artist_small_img"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:src="@drawable/ic_launcher" />
+        <TextView
+            android:id="@+id/artist_song_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/artist_song_count"
+            android:paddingTop="10dp" />
+    </LinearLayout>
 
 </LinearLayout>

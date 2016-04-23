@@ -1,27 +1,14 @@
 package com.example.anton.yandextestproject;
 
-/*{
-        "id":1080505,
-        "name":"Tove Lo",
-        "genres":[
-        "pop",
-        "dance",
-        "electronics"
-        ],
-        "tracks":81,
-        "albums":22,
-        "link":"http://www.tove-lo.com/",
-        "description":"шведская певица и автор песен. Она привлекла к себе внимание в 2013 году с выпуском сингла «Habits», но настоящего успеха добилась с ремиксом хип-хоп продюсера Hippie Sabotage на эту песню, который получил название «Stay High». 4 марта 2014 года вышел её дебютный мини-альбом Truth Serum, а 24 сентября этого же года дебютный студийный альбом Queen of the Clouds. Туве Лу является автором песен таких артистов, как Icona Pop, Girls Aloud и Шер Ллойд.",
-        "cover":{
-        "small":"http://avatars.yandex.net/get-music-content/dfc531f5.p.1080505/300x300",
-        "big":"http://avatars.yandex.net/get-music-content/dfc531f5.p.1080505/1000x1000"
-        }
-        },*/
-public class ArtistData {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ArtistData implements Parcelable {
     public static final String ID = "id";
     public static final String NAME = "name";
     public static final String TRACKS = "tracks";
     public static final String DESCRIPTION = "description";
+    public static final int MAX_TAGS_LENGTH = 50;
 
     public int id;
     public String name;
@@ -32,13 +19,82 @@ public class ArtistData {
     public String description;
     public Cover cover;
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeInt(genres.length);
+        dest.writeStringArray(genres);
+        dest.writeInt(tracks);
+        dest.writeInt(albums);
+        dest.writeString(link);
+        dest.writeString(description);
+        dest.writeString(cover.big);
+        dest.writeString(cover.small);
+    }
+    
+    public static final Parcelable.Creator<ArtistData> CREATOR = new Parcelable.Creator<ArtistData>() {
+        public ArtistData createFromParcel(Parcel in) {
+            return new ArtistData(in);
+        }
+
+        public ArtistData[] newArray(int size) {
+            return new ArtistData[size];
+        }
+    };
+
+    private ArtistData(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+
+        int genresLength = in.readInt();
+        genres = new String[genresLength];
+        in.readStringArray(genres);
+        tracks = in.readInt();
+        albums = in.readInt();
+        link = in.readString();
+        description = in.readString();
+
+        cover = new Cover();
+        cover.big = in.readString();
+        cover.small = in.readString();
+    }
+
     public class Cover {
         public String small;
         public String big;
     }
 
     public String getShortDesc() {
-        return this.description.substring(0,30);
+        if (this.description.length() > 30) {
+            return this.description.substring(0, 30).concat("...");
+        } else {
+            return this.description;
+        }
+    }
+
+    public String getTagList() {
+        String result = "";
+        String glue = ", ";
+
+        for (String tag : this.genres) {
+            result += tag + glue;
+        }
+
+        if (!result.isEmpty()) {
+            result =  result.substring(0, result.length() - glue.length());
+        }
+
+        if (result.length() > MAX_TAGS_LENGTH) {
+            result = result.substring(0, MAX_TAGS_LENGTH) + "<...>";
+        }
+
+        return result;
     }
 }
 

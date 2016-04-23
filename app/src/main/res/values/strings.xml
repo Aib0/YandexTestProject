@@ -4,4 +4,9 @@
     <string name="artist_short_desc">This is Description</string>
     <string name="artist_title">This is Title</string>
     <string name="artist_small_img">Small artist photo</string>
+    <string name="song_count_template">%1$d альбомов %2$d песен</string>
+    <string name="cache_file_artists">cache_file_artists_file</string>
+    <string name="big_photo_of_artist_desc">Big photo of artist</string>
+    <string name="artist_tag_list">Genre list</string>
+    <string name="artist_song_count">Albums and songs count</string>
 </resources>
