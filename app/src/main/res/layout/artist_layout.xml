@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:id="@+id/artist_line"
     android:padding="10dp">
 
     <ImageView
@@ -31,13 +32,13 @@
             android:id="@+id/artist_tag_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/artist_short_desc" />
+            android:text="@string/artist_tag_list" />
 
         <TextView
             android:id="@+id/artist_song_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/artist_short_desc"
+            android:text="@string/artist_song_count"
             android:paddingTop="10dp" />
     </LinearLayout>
 

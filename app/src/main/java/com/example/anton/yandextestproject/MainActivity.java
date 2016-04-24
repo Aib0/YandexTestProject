@@ -1,15 +1,22 @@
 package com.example.anton.yandextestproject;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -45,6 +52,19 @@ public class MainActivity extends AppCompatActivity {
         ArtistsCacheFilename = getString(R.string.cache_file_artists);
 
         setContentView(R.layout.activity_main);
+
+        testData = loadDataFromCache();
+
+        handleData();
+
+        new HttpAsyncRequestArtists().execute(URL);
+
+        int a = 1;
+    }
+
+    private String loadDataFromCache() {
+        String result = "";
+
         try {
             FileInputStream fis = openFileInput(ArtistsCacheFilename);
             StringBuffer fileContent = new StringBuffer("");
@@ -56,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 fileContent.append(new String(buffer, 0, n));
             }
 
-            testData = fileContent.toString();
+            result = fileContent.toString();
         } catch (FileNotFoundException e) {
             Log.i(LOG, "Not found cache file");
             e.printStackTrace();
@@ -65,11 +85,19 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        handleData();
+        return result;
+    }
 
-        new HttpAsyncRequestArtists().execute(URL);
-
-        int a = 1;
+    private boolean saveDataToCache(String data) {
+        try {
+            FileOutputStream fos = openFileOutput(ArtistsCacheFilename, Context.MODE_PRIVATE);
+            fos.write(data.getBytes());
+            fos.close();
+        } catch (Exception e) {
+            Log.e(LOG, "Error saving response to cache: " + e.toString());
+            return false;
+        }
+        return true;
     }
 
     private void handleData() {
@@ -82,6 +110,19 @@ public class MainActivity extends AppCompatActivity {
 
         mainListView = (ListView) findViewById(R.id.main_list_view);
         mainListView.setAdapter(artistAdapter);
+        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ArtistData item = artistAdapter.getItem(position);
+
+                Intent intent = new Intent(MainActivity.this, DetailViewActivity.class);
+
+                intent.putExtra("ArtistData", item);
+
+                startActivity(intent);
+            }
+        });
     }
 
     private class HttpAsyncRequestArtists extends AsyncTask<String, Void, String> {
@@ -93,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
         private String convertInputStreamToString(InputStream inputStream) throws IOException {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line = "";
+            String line;
             String result = "";
             while ((line = bufferedReader.readLine()) != null)
                 result += line;
@@ -104,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public String GET(String url) {
-            InputStream inputStream = null;
+            InputStream inputStream;
             String result = "";
             try {
 
@@ -132,17 +173,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getBaseContext(), "Received data!", Toast.LENGTH_LONG).show();
+            if (result.isEmpty()) {
+                return;
+            }
+
+            Toast.makeText(getBaseContext(), "Received artist data from Yandex", Toast.LENGTH_LONG).show();
             testData = result;
             handleData();
-
-            try {
-                FileOutputStream fos = openFileOutput(ArtistsCacheFilename, Context.MODE_PRIVATE);
-                fos.write(testData.getBytes());
-                fos.close();
-            } catch (Exception e) {
-                Log.e(LOG, "Error saving response to cache: " + e.toString());
-            }
+            saveDataToCache(testData);
         }
     }
 }
