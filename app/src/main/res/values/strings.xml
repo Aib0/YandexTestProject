@@ -13,4 +13,6 @@
     <string name="artist_biography">Биография артиста</string>
     <string name="main_activity_title">Исполнители</string>
     <string name="empty_data_text">Пустой список артистов</string>
+    <string name="content_url">http://download.cdn.yandex.net/mobilization-2016/artists.json</string>
+    <string name="artist_data_intent_extra">ArtistData</string>
 </resources>

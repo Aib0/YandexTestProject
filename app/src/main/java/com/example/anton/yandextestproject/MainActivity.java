@@ -30,35 +30,50 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Основной класс приложения
+ */
 public class MainActivity extends AppCompatActivity {
+    public static final String LOG = "YandexTestMainActivity";
 
-    protected String data;
-    protected String URL = "http://download.cdn.yandex.net/mobilization-2016/artists.json";
-    protected String artistData = "";
+    /**
+     * Json-кодированные дынне по артистам
+     */
+    protected String artistData;
+
+    /**
+     * Адаптер для вывода артистов построчно
+     */
     protected ArtistAdapter artistAdapter;
-    protected ListView mainListView;
-    protected String ArtistsCacheFilename;
 
-    public static final String LOG = "YandexTest";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ArtistsCacheFilename = getString(R.string.cache_file_artists);
-
         setTitle(getString(R.string.main_activity_title));
 
+        /**
+         * Пытаемся загрузить данные из кэша и отрисовать их
+         */
         artistData = loadDataFromCache();
-
         drawData();
 
-        new HttpAsyncRequestArtists().execute(URL);
+        /**
+         * В этот же момент производя асинхронный запрос за новыми данными
+         */
+        new HttpAsyncRequestArtists().execute(getString(R.string.content_url));
     }
 
+    /**
+     * Функция отрисовки данных на экран
+     */
     private void drawData() {
         artistAdapter = handleData();
 
+        /**
+         * Если пришел пустой список - выводим соответствующий экран
+         */
         if (null == artistAdapter) {
             setContentView(R.layout.empty_main);
             return;
@@ -66,8 +81,12 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        mainListView = (ListView) findViewById(R.id.main_list_view);
+        ListView mainListView = (ListView) findViewById(R.id.main_list_view);
         mainListView.setAdapter(artistAdapter);
+
+        /**
+         * Добавляем обработчик нажатий на строчки с артистами
+         */
         mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,18 +94,25 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, DetailViewActivity.class);
 
-                intent.putExtra("ArtistData", item);
+                intent.putExtra(getString(R.string.artist_data_intent_extra), item);
 
                 startActivity(intent);
             }
         });
     }
 
+    /**
+     * Функция загрузки данных из кэша
+     * Не самый лучший способ, наверное, как минимум можно проверять версию на сервере
+     * и не загружать если не изменилось
+     *
+     * @return json-кодированный результат из кэша или пустую строку при остутствующем
+     */
     private String loadDataFromCache() {
         String result = "";
 
         try {
-            FileInputStream fis = openFileInput(ArtistsCacheFilename);
+            FileInputStream fis = openFileInput(getString(R.string.cache_file_artists));
             StringBuffer fileContent = new StringBuffer("");
 
             byte[] buffer = new byte[1024];
@@ -108,9 +134,15 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * Функция сохранения в кэш
+     *
+     * @param data String строка для сохранения
+     * @return boolean успешность сохранения
+     */
     private boolean saveDataToCache(String data) {
         try {
-            FileOutputStream fos = openFileOutput(ArtistsCacheFilename, Context.MODE_PRIVATE);
+            FileOutputStream fos = openFileOutput(getString(R.string.cache_file_artists), Context.MODE_PRIVATE);
             fos.write(data.getBytes());
             fos.close();
         } catch (Exception e) {
@@ -120,11 +152,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Пытаемся получить адаптер из данных
+     *
+     * @return ArtistAdapter|null в заввисимости от успешности парсинга строки возврващем объект/null
+     */
     @Nullable
     private ArtistAdapter handleData() {
         Gson gson = new Gson();
 
-        Type artistDataType = new TypeToken<List<ArtistData>>() {}.getType();
+        Type artistDataType = new TypeToken<List<ArtistData>>() {
+        }.getType();
 
         ArrayList<ArtistData> artistDataList = gson.fromJson(artistData, artistDataType);
 
@@ -135,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Асинхронная загрузка данных по URL, большая часть - копипаст
+     *
+     * @author http://hmkcode.com/android-internet-connection-using-http-get-httpclient/
+     */
     private class HttpAsyncRequestArtists extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -151,14 +194,12 @@ public class MainActivity extends AppCompatActivity {
 
             inputStream.close();
             return result;
-
         }
 
         public String GET(String url) {
             InputStream inputStream;
             String result = "";
             try {
-
                 // create HttpClient
                 HttpClient httpclient = new DefaultHttpClient();
 
@@ -181,6 +222,11 @@ public class MainActivity extends AppCompatActivity {
             return result;
         }
 
+        /**
+         * Разбираем пришедший ответ, рисуем его и сохраняем в кэш
+         *
+         * @param result String
+         */
         @Override
         protected void onPostExecute(String result) {
             if (result.isEmpty()) {

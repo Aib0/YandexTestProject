@@ -3,13 +3,18 @@ package com.example.anton.yandextestproject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Класс хранения данных об артисте
+ */
 public class ArtistData implements Parcelable {
-    public static final String ID = "id";
-    public static final String NAME = "name";
-    public static final String TRACKS = "tracks";
-    public static final String DESCRIPTION = "description";
+    /**
+     * Ограничение на максимальную длинну строки списка тэгов
+     */
     public static final int MAX_TAGS_LENGTH = 50;
 
+    /**
+     * Названия соответствуют полям в json-e
+     */
     public int id;
     public String name;
     public String[] genres;
@@ -18,6 +23,44 @@ public class ArtistData implements Parcelable {
     public String link;
     public String description;
     public Cover cover;
+
+    /**
+     * Класс для хранения двух ссылок на изображения артиста
+     */
+    public class Cover {
+        public String small;
+        public String big;
+    }
+
+    /**
+     * Функция для "склеивания" жанров исполнителя
+     *
+     * @return String
+     */
+    public String getGenresString() {
+        String result = "";
+        String glue = ", ";
+
+        for (String tag : this.genres) {
+            result += tag + glue;
+        }
+
+        if (!result.isEmpty()) {
+            result =  result.substring(0, result.length() - glue.length());
+        }
+
+        if (result.length() > MAX_TAGS_LENGTH) {
+            result = result.substring(0, MAX_TAGS_LENGTH) + "<...>";
+        }
+
+        return result;
+    }
+
+    /**
+     * Методы, необходимые для реализации Parcelable
+     *
+     * А он нам нужен чтобы без проблем передавать объект данных артиста между activity
+     */
 
     @Override
     public int describeContents() {
@@ -63,38 +106,6 @@ public class ArtistData implements Parcelable {
         cover = new Cover();
         cover.big = in.readString();
         cover.small = in.readString();
-    }
-
-    public class Cover {
-        public String small;
-        public String big;
-    }
-
-    public String getShortDesc() {
-        if (this.description.length() > 30) {
-            return this.description.substring(0, 30).concat("...");
-        } else {
-            return this.description;
-        }
-    }
-
-    public String getTagList() {
-        String result = "";
-        String glue = ", ";
-
-        for (String tag : this.genres) {
-            result += tag + glue;
-        }
-
-        if (!result.isEmpty()) {
-            result =  result.substring(0, result.length() - glue.length());
-        }
-
-        if (result.length() > MAX_TAGS_LENGTH) {
-            result = result.substring(0, MAX_TAGS_LENGTH) + "<...>";
-        }
-
-        return result;
     }
 }
 
