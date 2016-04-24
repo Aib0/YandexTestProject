@@ -3,6 +3,7 @@ package com.example.anton.yandextestproject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         ArtistsCacheFilename = getString(R.string.cache_file_artists);
 
-        setContentView(R.layout.activity_main);
-
         setTitle(getString(R.string.main_activity_title));
 
         artistData = loadDataFromCache();
@@ -57,16 +56,19 @@ public class MainActivity extends AppCompatActivity {
         new HttpAsyncRequestArtists().execute(URL);
     }
 
-    private void drawEmptyData() {
-
-    }
-
     private void drawData() {
         artistAdapter = handleData();
+
+        if (null == artistAdapter) {
+            setContentView(R.layout.empty_main);
+            return;
+        }
+
+        setContentView(R.layout.activity_main);
+
         mainListView = (ListView) findViewById(R.id.main_list_view);
         mainListView.setAdapter(artistAdapter);
         mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArtistData item = artistAdapter.getItem(position);
@@ -118,14 +120,19 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Nullable
     private ArtistAdapter handleData() {
         Gson gson = new Gson();
 
         Type artistDataType = new TypeToken<List<ArtistData>>() {}.getType();
-//        artistData = "";
+
         ArrayList<ArtistData> artistDataList = gson.fromJson(artistData, artistDataType);
 
-        return new ArtistAdapter(getBaseContext(), R.layout.artist_layout, artistDataList);
+        if (artistDataList == null) {
+            return null;
+        } else {
+            return new ArtistAdapter(getBaseContext(), R.layout.artist_layout, artistDataList);
+        }
     }
 
     private class HttpAsyncRequestArtists extends AsyncTask<String, Void, String> {
@@ -168,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     result = "";
 
             } catch (Exception e) {
-                Log.d("InputStream", e.getLocalizedMessage());
+                Log.d(LOG, e.getLocalizedMessage());
             }
 
             return result;
@@ -179,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
             if (result.isEmpty()) {
                 return;
             }
+
             artistData = result;
             drawData();
             saveDataToCache(artistData);
