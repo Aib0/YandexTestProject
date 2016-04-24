@@ -32,12 +32,14 @@
             android:id="@+id/artist_tag_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorGrey"
             android:text="@string/artist_tag_list" />
 
         <TextView
             android:id="@+id/artist_song_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorGrey"
             android:text="@string/artist_song_count"
             android:paddingTop="10dp" />
     </LinearLayout>

@@ -18,15 +18,19 @@ public class ArtistAdapter extends ArrayAdapter<ArtistData> {
     final public static String TAG = "ArtistAdapter";
 
     int resource;
+    boolean isEmptyObjects;
     Context context;
     String songCountTemplate;
 
     public ArtistAdapter(Context context, int resource, ArrayList<ArtistData> objects) {
         super(context, resource, objects);
 
-        this.context = context;
-        this.resource = resource;
-        this.songCountTemplate = context.getResources().getString(R.string.song_count_template);
+        String a = null;
+
+        isEmptyObjects = objects == null || objects.isEmpty();
+        context = context;
+        resource = resource;
+        songCountTemplate = context.getResources().getString(R.string.song_count_template);
     }
 
     @Override
@@ -67,5 +71,10 @@ public class ArtistAdapter extends ArrayAdapter<ArtistData> {
         }
 
         return artistView;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return isEmptyObjects || super.isEmpty();
     }
 }

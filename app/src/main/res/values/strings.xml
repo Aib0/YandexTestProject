@@ -9,4 +9,8 @@
     <string name="big_photo_of_artist_desc">Big photo of artist</string>
     <string name="artist_tag_list">Genre list</string>
     <string name="artist_song_count">Albums and songs count</string>
+    <string name="artist_biography_title">Биография</string>
+    <string name="artist_biography">Биография артиста</string>
+    <string name="main_activity_title">Исполнители</string>
+    <string name="empty_data_text">Пустой список артистов</string>
 </resources>
